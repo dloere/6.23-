@@ -2,8 +2,7 @@
 
 import crypto from "crypto"; // es6문법
 import secp256k1 from "secp256k1";
-import keccak from "keccak";
-
+import createKeccakHash from "keccak";
 
 function createPrivatekey() {
     let privateKey; 
@@ -41,7 +40,7 @@ console.log("압축 안 된 공개키 : " + createPublicKey2(privateKey, false).
 
 function createAddress(publicKey) {
     // 참고로 64개중에서 앞에 04는 당연히 잘라야함.(slice(1)) 16진수로 처리하기 전이므로 1개 1byte자를시 2개가 잘림
-    const hash = keccak("keccak256").update(publicKey.slice(1)).digest("hex"); //16진수 변환
+    const hash = createKeccakHash("keccak256").update(publicKey.slice(1)).digest("hex"); //16진수 변환
     //앞에 0x 붙여야함. 앞에 24개를 버리고 40개를 취해야함. 
     return "0x" + hash.slice(24);
 }
@@ -62,3 +61,31 @@ const real_address = createAddress(real_publicKey);
 
 console.log("실제 개인키로 뽑은 주소 : ", real_address);
 
+
+const usermake_privateKey = Buffer.from("000000000000000000000000000000000000000000000000000000000000270f", "hex")
+
+console.log("유저가 만든 키로만든 주소 :", createAddress(createPublicKey2(usermake_privateKey, false)))
+
+
+
+function toChecksumAddress (address) {
+    address = address.toLowerCase().replace('0x', '')
+    var hash = createKeccakHash('keccak256').update(address).digest('hex')
+    var ret = '0x'
+  
+    for (var i = 0; i < address.length; i++) {
+      if (parseInt(hash[i], 16) >= 8) {
+        ret += address[i].toUpperCase()
+      } else {
+        ret += address[i]
+      }
+    }
+  
+    return ret
+  }
+
+
+const checksumAddress = toChecksumAddress(real_address);
+
+console.log("실제 주소 : ", real_address);
+console.log("주소 체크 :" , checksumAddress); // 이더리움 대소문자 규칙에 맞게 
