@@ -84,12 +84,14 @@ function mneMonicToPrivateKey(mnemonic) {
   return Buffer.from(privateKey.toString(), "hex"); // buffer로 바꿔서 저장.
 }
 
-const mnemonic = createMnemonic();
-console.log("mnemonic : ", mnemonic.toString());
 
-const privateKey = mneMonicToPrivateKey(mnemonic);
-console.log("개인키 : ", privateKey.toString("hex") );
-
-const address = privateKeyToAddress(privateKey);
-console.log("주소 :", address);
-
+export default {
+  createPrivatekey,
+  createPublicKey,
+  createPublicKey2,
+  createAddress,
+  toChecksumAddress,
+  privateKeyToAddress,
+  createMnemonic,
+  mneMonicToPrivateKey,
+};
